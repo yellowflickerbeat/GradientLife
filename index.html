@@ -9,31 +9,60 @@
 <body class="bg-yellow-100 min-h-screen flex items-center justify-center">
   <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
     <h1 class="text-2xl font-bold text-black-800 mb-4">To-Do List</h1>
+    
     <div class="flex items-center space-x-2 mb-4">
-      <input 
-        id="todoInput" 
-        type="text" 
-        placeholder="Enter your goal" 
+      <input
+        id="todoInput"
+        type="text"
+        placeholder="Enter your goal"
         class="flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
-      <button 
-        id="addTodoButton" 
+      <button
+        id="addTodoButton"
         class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
         Add Goal
       </button>
     </div>
+    
     <ul id="todoList" class="space-y-2"></ul>
     <hr class="my-6" />
+    
     <h2 class="text-xl font-semibold text-beige-800 mb-2">Best Thing of the Day</h2>
-    <textarea 
-      id="bestThingInput" 
+    <textarea
+      id="bestThingInput"
       placeholder="Write the best thing that happened today"
       class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
     ></textarea>
     <p id="savedBestThing" class="mt-2 text-beige-600"></p>
+    
+    <hr class="my-6" />
+    
+    <!-- New Obsessive Thing Section -->
+    <h2 class="text-xl font-semibold text-beige-800 mb-2">Obsessive Thing of Today</h2>
+    <div class="space-y-4">      
+      <div class="flex items-center space-x-2">
+        <input
+          id="tagInput"
+          type="text"
+          placeholder="Add tags"
+          class="flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400"
+        />
+        <button
+          id="addObsessiveButton"
+          class="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600">
+          Add
+        </button>
+      </div>
+      
+      <!-- Tags Display Area -->
+      <div id="tagsDisplay" class="flex flex-wrap gap-2"></div>
+      
+      <!-- Obsessive Thoughts List -->
+      <div id="obsessiveList" class="mt-4 space-y-2"></div>
+    </div>
+    
     <div id="contributionChart" class="flex flex-wrap mt-6"></div>
   </div>
-  <div id="contributionChart" class="flex flex-wrap mt-6"></div>
   <script src="script.js" defer></script>
 </body>
 </html>
