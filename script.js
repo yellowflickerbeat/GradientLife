@@ -1,5 +1,21 @@
 "use strict";
 
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDxI0AYkPRZdxTVUVON9rJMH0fsCMnDVsw",
+  authDomain: "gradientlife-68d90.firebaseapp.com",
+  projectId: "gradientlife-68d90",
+  storageBucket: "gradientlife-68d90.firebasestorage.app",
+  messagingSenderId: "322035152700",
+  appId: "1:322035152700:web:a67f9cbbdc1914e4d61039"
+};
+
+// Initialize Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.firestore();
+
 class TodoApp {
   constructor() {
     this.todoList = [];
@@ -8,7 +24,7 @@ class TodoApp {
     this.bestThingInput = document.getElementById("bestThingInput");
     this.savedBestThing = document.getElementById("savedBestThing");
     this.contributionChart = document.getElementById("contributionChart");
-    this.dateKey = new Date().toLocaleDateString("en-IN"); // Today's date in IST format
+    this.dateKey = new Date().toLocaleDateString("en-IN");
     this.initialize();
   }
 
@@ -22,16 +38,16 @@ class TodoApp {
     this.updateContributionChart();
   }
 
-  checkDailyReset() {
+  async checkDailyReset() {
     const lastResetDate = localStorage.getItem("lastResetDate");
     if (lastResetDate !== this.dateKey) {
-      // Reset form if the day has changed
       this.todoList = [];
       this.todoInput.value = "";
       this.bestThingInput.value = "";
       localStorage.setItem("lastResetDate", this.dateKey);
       this.updateTodoList();
       this.saveBestThing();
+      await this.saveDataToFirestore();
     }
   }
 
@@ -83,29 +99,41 @@ class TodoApp {
     this.updateContributionChart();
   }
 
-  loadSavedData() {
-    const bestThingText = localStorage.getItem("bestThing");
-    if (bestThingText) {
-      this.savedBestThing.textContent = `Best Thing Saved: ${bestThingText}`;
-      this.bestThingInput.value = bestThingText;
+  async loadSavedData() {
+    const docRef = db.collection("dailyData").doc(this.dateKey);
+    const doc = await docRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      this.todoList = data.todoList || [];
+      this.bestThingInput.value = data.bestThing || "";
+      this.savedBestThing.textContent = data.bestThing ? `Best Thing Saved: ${data.bestThing}` : "";
+      this.updateTodoList();
     }
+  }
+
+  async saveDataToFirestore() {
+    const data = {
+      todoList: this.todoList,
+      bestThing: this.bestThingInput.value.trim(),
+      date: this.dateKey
+    };
+    await db.collection("dailyData").doc(this.dateKey).set(data);
   }
 
   updateContributionChart() {
     const chartData = [];
     for (let i = 0; i < 30; i++) {
       const date = new Date();
-      date.setDate(date.getDate() - i); // Calculate past 30 days
-      const dateKey = date.toLocaleDateString("en-IN"); // Date format in IST
+      date.setDate(date.getDate() - i);
+      const dateKey = date.toLocaleDateString("en-IN");
       const progress = localStorage.getItem(`progress_${dateKey}`);
       chartData.push({ date: dateKey, progress: progress ? parseInt(progress) : 0 });
     }
   
-    // Generate the chart
     this.contributionChart.innerHTML = chartData
       .reverse()
       .map((day) => {
-        const color = this.getColor(day.progress); // Determine color
+        const color = this.getColor(day.progress);
         return `<div title="${day.date}: ${day.progress}%" 
                   class="w-6 h-6 m-1 rounded ${color}"></div>`;
       })
@@ -113,12 +141,11 @@ class TodoApp {
   }
   
   getColor(progress) {
-    // Return corresponding Tailwind class or custom inline style for the color gradient
-    if (progress === 0) return "bg-gray-300"; // 0%: Gray
-    if (progress <= 25) return 'bg-[#07C8F9]'; // 1–25%: Light Blue
-    if (progress <= 50) return 'bg-[#0A85ED]'; // 26–50%: Medium Blue
-    if (progress <= 75) return 'bg-[#5360E0]'; // 51–75%: Deep Blue
-    return 'bg-[#7137D6]'; // 76–100%: Purple
+    if (progress === 0) return "bg-gray-300";
+    if (progress <= 25) return 'bg-[#07C8F9]';
+    if (progress <= 50) return 'bg-[#0A85ED]';
+    if (progress <= 75) return 'bg-[#5360E0]';
+    return 'bg-[#7137D6]';
   }  
 }
 

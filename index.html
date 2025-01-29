@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>To-Do List with Tailwind</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
 <body class="bg-yellow-100 min-h-screen flex items-center justify-center">
   <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
@@ -37,7 +41,6 @@
     
     <hr class="my-6" />
     
-    <!-- New Obsessive Thing Section -->
     <h2 class="text-xl font-semibold text-beige-800 mb-2">Obsessive Thing of Today</h2>
     <div class="space-y-4">      
       <div class="flex items-center space-x-2">
@@ -54,10 +57,8 @@
         </button>
       </div>
       
-      <!-- Tags Display Area -->
       <div id="tagsDisplay" class="flex flex-wrap gap-2"></div>
       
-      <!-- Obsessive Thoughts List -->
       <div id="obsessiveList" class="mt-4 space-y-2"></div>
     </div>
     
