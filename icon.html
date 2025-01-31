@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Gradient</title>
+    <!-- Add Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .gradient-text {
+            font-family: Georgia, serif;
+            font-size: 4.5rem;
+            font-weight: bold;
+            background: linear-gradient(
+                90deg,
+                #d1d5db,
+                #07C8F9,
+                #0A85ED,
+                #5360E0,
+                #7137D6
+            );
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 8s ease infinite;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f3f4f6;
+        }
+
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 300px;
+        }
+
+        .login-button {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-family: Georgia, serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .google-btn {
+            background: #ffffff;
+            color: #4285f4;
+            border: 2px solid #4285f4;
+        }
+
+        .guest-btn {
+            background: linear-gradient(90deg, #5360E0, #7137D6);
+            color: white;
+        }
+
+        .button-icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="gradient-text">Life Gradient</h1>
+    
+    <div class="login-container">
+        <button id="googleLoginButton" class="login-button google-btn">
+            <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" fill="#4285f4"/>
+            </svg>
+            Continue with Google
+        </button>
+        
+        <button id="guestLoginButton" class="login-button guest-btn">
+            <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white">
+                <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"/>
+            </svg>
+            Continue as Guest
+        </button>
+    </div>
+
+    <!-- Add Firebase script -->
+    <script type="module" src="firebase2.js"></script>
+</body>
+</html>
