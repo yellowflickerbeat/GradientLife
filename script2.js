@@ -39,7 +39,10 @@ class TodoApp {
     onValue(todayRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
-        this.todoList = data.goals || [];
+        this.todoList = (data.goals || []).map(todo => ({
+          ...todo,
+          completed: Number(todo.completed)
+        }));
         this.bestThingInput.value = data.bestThing || "";
         this.obsessiveThingInput.value = data.obsessiveThing || "";
         this.updateTodoList();
@@ -150,31 +153,34 @@ class TodoApp {
   }
 
   updateContributionChart(daysData = {}) {
+    console.log("Updating contribution chart", daysData);
+    
     const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const currentYear = today.getUTCFullYear();
+    const currentMonth = today.getUTCMonth();
+    const daysInMonth = new Date(Date.UTC(currentYear, currentMonth + 1, 0)).getUTCDate();
 
     const monthlyData = [];
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(currentYear, currentMonth, day);
-      const dateString = date.toISOString().split('T')[0];
-      const dayData = daysData[dateString] || {
-        progress: 0,
-        chartColor: this.getColor(0)
-      };
+        const dateUTC = new Date(Date.UTC(currentYear, currentMonth, day));
+        const dateString = dateUTC.toISOString().split('T')[0];
+        
+        const dayData = daysData[dateString] || {
+            progress: 0,
+            chartColor: this.getColor(0)
+        };
 
-      monthlyData.push({
-        date: dateString,
-        progress: dayData.progressPercentage || 0,
-        color: dayData.chartColor || this.getColor(dayData.progressPercentage || 0),
-        isFuture: date > today
-      });
+        monthlyData.push({
+            date: dateString,
+            progress: dayData.progressPercentage || 0,
+            color: this.getColor(dayData.progressPercentage || 0),
+            isFuture: dateUTC > today
+        });
     }
 
     const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
     ];
 
     this.contributionChart.innerHTML = `
@@ -182,10 +188,10 @@ class TodoApp {
       <div class="flex flex-wrap gap-1">
         ${monthlyData.map(day => `
           <div 
-            title="${day.date}: ${day.progress}%" 
-            class="w-6 h-6 rounded cursor-pointer transition-colors ${day.isFuture ? 'bg-gray-100' : day.color}"
-            data-date="${day.date}"
-          ></div>
+          title="${day.date}: ${day.progress}%" 
+          class="w-6 h-6 rounded cursor-pointer transition-colors ${day.isFuture ? 'bg-gray-100 opacity-50' : day.color}"
+          data-date="${day.date}"
+      ></div>
         `).join("")}
       </div>
     `;
@@ -193,23 +199,25 @@ class TodoApp {
     // Add click handlers for chart squares
     const squares = this.contributionChart.querySelectorAll('[data-date]');
     squares.forEach(square => {
-      square.addEventListener('click', () => {
-        const date = square.getAttribute('data-date');
-        const dayData = daysData[date];
-        if (dayData) {
-          alert(`
+        square.addEventListener('click', () => {
+            const date = square.getAttribute('data-date');
+            const dayData = daysData[date];
+            if (dayData) {
+                alert(`
 Date: ${date}
 Progress: ${dayData.progressPercentage}%
 Completed Goals: ${dayData.completedGoals}/${dayData.totalGoals}
 Best Thing: ${dayData.bestThing || 'Not recorded'}
 Obsessive Thing: ${dayData.obsessiveThing || 'Not recorded'}
-          `);
-        }
-      });
+                `);
+            }
+        });
     });
   }
 
+
   getColor(progress) {
+    //console.log(`Progress: ${progress}`);
     if (progress === 0) return "bg-gray-300";
     if (progress <= 25) return 'bg-[#07C8F9]';
     if (progress <= 50) return 'bg-[#0A85ED]';
