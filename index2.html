@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life Gradient - Todo</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .gradient-header {
+    background: linear-gradient(90deg, #5360E0, #7137D6);
+  }
+  .gradient-text {
+    background: linear-gradient(90deg, #07C8F9, #0A85ED, #5360E0, #7137D6);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  body {
+    background-color: #f3f4f6;
+    font-family: Georgia, serif;
+  }
+  #contributionChart div {
+    transition: background-color 0.3s ease;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center flex-col">
+  <header class="w-full gradient-header text-white p-4 flex justify-between items-center">
+    <div class="flex space-x-6">
+      <a href="monthlyData.html" class="text-lg hover:text-gray-200">Monthly Data</a>
+      <a href="fanfare.html" class="text-lg hover:text-gray-200">Fanfare</a>
+      <a href="gratitude.html" class="text-lg hover:text-gray-200">Gratitude</a>
+    </div>
+    <button id="logoutButton" class="flex items-center bg-white/20 px-4 py-2 rounded-full hover:bg-white/30">
+      <span class="material-icons">exit_to_app</span>
+    </button>
+  </header>
+
+  <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md mt-8">
+    <h2 class="text-2xl font-bold gradient-text mb-4">Add Goal</h1>
+    
+    <div class="flex items-center space-x-2 mb-4">
+      <input
+        id="todoInput"
+        type="text"
+        placeholder="Enter your goal"
+        class="flex-grow px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#5360E0]"
+      />
+      <button
+        id="addTodoButton"
+        class="bg-gradient-to-r from-[#5360E0] to-[#7137D6] text-white px-4 py-2 rounded-full hover:opacity-90"
+      >
+        Add Goal
+      </button>
+    </div>
+    
+    <ul id="todoList" class="space-y-2"></ul>
+    <hr class="my-6" />
+    
+    <div class="mb-4">
+      <h2 class="text-2xl font-semibold gradient-text mb-2">Highlight of the Day</h2>
+      <div class="flex gap-2">
+        <textarea
+          id="bestThingInput"
+          placeholder="Write the best thing that happened today"
+          class="flex-grow px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5360E0]"
+        ></textarea>
+        <button
+          id="saveBestThing"
+          class="bg-gradient-to-r from-[#5360E0] to-[#7137D6] text-white px-3 py-2 rounded-full hover:opacity-90"
+        >
+          <i class="material-icons">save</i>
+        </button>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <h2 class="text-2xl font-semibold gradient-text mb-2">Today's Fixation</h2>
+      <div class="flex gap-2">
+        <input
+          type="text"
+          id="obsessiveThingInput"
+          placeholder="What consumed your thoughts today?"
+          class="flex-grow px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#5360E0]"
+        />
+        <button
+          id="saveButton"
+          class="bg-gradient-to-r from-[#5360E0] to-[#7137D6] text-white px-3 py-2 rounded-full hover:opacity-90"
+        >
+          <i class="material-icons">save</i>
+        </button>
+      </div>
+    </div>
+
+    <hr class="my-6">
+    <h2 class="text-2xl font-semibold gradient-text mb-4">Progress Chart</h2>
+    <div id="contributionChart" class="flex flex-wrap gap-0.75 p-2 border rounded-lg"></div>
+  </div>
+
+  <script type="module">
+    document.getElementById("logoutButton").addEventListener("click", function() {
+      window.location.href = "icon.html";
+    });
+  </script>
+  
+  <script type="module" src="script2.js"></script>
+</body>
+</html>
