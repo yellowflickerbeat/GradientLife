@@ -1,8 +1,10 @@
-<strong>Does Github commits motivate you tobe a better developer?</strong>
+<strong>Does Github commits motivate you to be a better developer?</strong>
 
 Well, it does for me. So I thought why not motivate myself to be a better person but Github-style?
 The main idea here is to log my progress in a minimalist way and at the same the data speaking volumes.
 
-Check it out when it is deployed.
+Homepage:<br>
+(https://github.com/yellowflickerbeat/GradientLife/blob/main/lifegradient.gif)
 
-Developed using HTML, Tailwind and JS.
+Developed using HTML, Tailwind CSS and JS.
+Currently for personal use.
