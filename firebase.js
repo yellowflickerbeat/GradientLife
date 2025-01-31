@@ -45,7 +45,7 @@ googleLoginButton.addEventListener("click", () => {
       const user = result.user;
       saveUserData(user); // Save user to Firestore
       alert(`Welcome, ${user.displayName}!`);
-      window.location.href = "index.html"; // Redirect after login
+      window.location.href = "index2.html"; // Redirect after login
     })
     .catch((error) => {
       console.error("Google sign-in error:", error);
