@@ -21,6 +21,7 @@ class TodoApp {
     this.todoListElement = document.getElementById("todoList");
     this.bestThingInput = document.getElementById("bestThingInput");
     this.obsessiveThingInput = document.getElementById("obsessiveThingInput");
+    this.takeawayInput = document.getElementById("takeawayInput");
     this.contributionChart = document.getElementById("contributionChart");
     this.dateKey = new Date().toISOString().split('T')[0];
     this.initialize();
@@ -30,6 +31,7 @@ class TodoApp {
     document.getElementById("addTodoButton").addEventListener("click", () => this.addTodo());
     document.getElementById("saveButton").addEventListener("click", () => this.saveDailyData());
     document.getElementById("saveBestThing").addEventListener("click", () => this.saveBestThing());
+    document.getElementById("saveTakeaway").addEventListener("click", () => this.saveTakeaway());
     this.setupRealtimeListeners();
     this.loadTodayData();
   }
@@ -45,6 +47,7 @@ class TodoApp {
         }));
         this.bestThingInput.value = data.bestThing || "";
         this.obsessiveThingInput.value = data.obsessiveThing || "";
+        this.takeawayInput.value = data.takeaway || "";
         this.updateTodoList();
       }
     });
@@ -87,9 +90,22 @@ class TodoApp {
     if (bestThing) {
       try {
         await set(ref(db, `days/${this.dateKey}/bestThing`), bestThing);
-        alert("Best thing saved!");
+        alert("Highlight saved!");
       } catch (error) {
-        console.error("Error saving best thing:", error);
+        console.error("Error saving the highlight:", error);
+        alert("Save failed. Please retry.");
+      }
+    }
+  }
+
+  async saveTakeaway() {
+    const takeaway = this.takeawayInput.value.trim();
+    if (takeaway) {
+      try {
+        await set(ref(db, `days/${this.dateKey}/takeaway`), takeaway);
+        alert("Takeaway saved!");
+      } catch (error) {
+        console.error("Error saving the takeaway:", error);
         alert("Save failed. Please retry.");
       }
     }
@@ -137,6 +153,7 @@ class TodoApp {
       chartColor: this.getColor(progress),
       bestThing: this.bestThingInput.value.trim(),
       obsessiveThing: this.obsessiveThingInput.value.trim(),
+      takeaway: this.takeawayInput.value.trim(),
       progressPercentage: progress,
       date: this.dateKey
     };
@@ -144,7 +161,7 @@ class TodoApp {
     try {
       await set(ref(db, `days/${this.dateKey}`), dailyData);
       if (document.activeElement === document.getElementById("saveButton")) {
-        alert("Day saved!");
+        alert("Fixation saved!");
       }
     } catch (error) {
       console.error("Error saving data:", error);
@@ -153,8 +170,6 @@ class TodoApp {
   }
 
   updateContributionChart(daysData = {}) {
-    console.log("Updating contribution chart", daysData);
-    
     const today = new Date();
     const currentYear = today.getUTCFullYear();
     const currentMonth = today.getUTCMonth();
@@ -162,25 +177,25 @@ class TodoApp {
 
     const monthlyData = [];
     for (let day = 1; day <= daysInMonth; day++) {
-        const dateUTC = new Date(Date.UTC(currentYear, currentMonth, day));
-        const dateString = dateUTC.toISOString().split('T')[0];
-        
-        const dayData = daysData[dateString] || {
-            progress: 0,
-            chartColor: this.getColor(0)
-        };
+      const dateUTC = new Date(Date.UTC(currentYear, currentMonth, day));
+      const dateString = dateUTC.toISOString().split('T')[0];
+      
+      const dayData = daysData[dateString] || {
+        progress: 0,
+        chartColor: this.getColor(0)
+      };
 
-        monthlyData.push({
-            date: dateString,
-            progress: dayData.progressPercentage || 0,
-            color: this.getColor(dayData.progressPercentage || 0),
-            isFuture: dateUTC > today
-        });
+      monthlyData.push({
+        date: dateString,
+        progress: dayData.progressPercentage || 0,
+        color: this.getColor(dayData.progressPercentage || 0),
+        isFuture: dateUTC > today
+      });
     }
 
     const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
     ];
 
     this.contributionChart.innerHTML = `
@@ -188,36 +203,34 @@ class TodoApp {
       <div class="flex flex-wrap gap-1">
         ${monthlyData.map(day => `
           <div 
-          title="${day.date}: ${day.progress}%" 
-          class="w-6 h-6 rounded cursor-pointer transition-colors ${day.isFuture ? 'bg-gray-100 opacity-50' : day.color}"
-          data-date="${day.date}"
-      ></div>
+            title="${day.date}: ${day.progress}%" 
+            class="w-6 h-6 rounded cursor-pointer transition-colors ${day.isFuture ? 'bg-gray-100 opacity-50' : day.color}"
+            data-date="${day.date}"
+          ></div>
         `).join("")}
       </div>
     `;
 
-    // Add click handlers for chart squares
     const squares = this.contributionChart.querySelectorAll('[data-date]');
     squares.forEach(square => {
-        square.addEventListener('click', () => {
-            const date = square.getAttribute('data-date');
-            const dayData = daysData[date];
-            if (dayData) {
-                alert(`
+      square.addEventListener('click', () => {
+        const date = square.getAttribute('data-date');
+        const dayData = daysData[date];
+        if (dayData) {
+          alert(`
 Date: ${date}
 Progress: ${dayData.progressPercentage}%
 Completed Goals: ${dayData.completedGoals}/${dayData.totalGoals}
 Best Thing: ${dayData.bestThing || 'Not recorded'}
 Obsessive Thing: ${dayData.obsessiveThing || 'Not recorded'}
-                `);
-            }
-        });
+Takeaway: ${dayData.takeaway || 'Not recorded'}
+          `);
+        }
+      });
     });
   }
 
-
   getColor(progress) {
-    //console.log(`Progress: ${progress}`);
     if (progress === 0) return "bg-gray-300";
     if (progress <= 25) return 'bg-[#07C8F9]';
     if (progress <= 50) return 'bg-[#0A85ED]';

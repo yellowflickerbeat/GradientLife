@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Life Gradient - Todo</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <title>Life Gradient</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -37,6 +38,7 @@
       <a href="monthlyData.html" class="text-lg hover:text-gray-200">Monthly Data</a>
       <a href="fanfare.html" class="text-lg hover:text-gray-200">Fanfare</a>
       <a href="gratitude.html" class="text-lg hover:text-gray-200">Gratitude</a>
+      <a href="insight.html" class="text-lg hover:text-gray-200">Insights</a>
     </div>
     <button id="logoutButton" class="flex items-center bg-white/20 px-4 py-2 rounded-full hover:bg-white/30">
       <span class="material-icons">exit_to_app</span>
@@ -81,6 +83,23 @@
       </div>
     </div>
 
+    <div class="mb-4">
+      <h2 class="text-2xl font-semibold gradient-text mb-2">Takeaway of the Day</h2>
+      <div class="flex gap-2">
+      <textarea
+      id="takeawayInput" 
+      placeholder="Write insights of the day"
+      class="flex-grow px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5360E0]"
+      ></textarea>
+      <button
+          id="saveTakeaway"
+          class="bg-gradient-to-r from-[#5360E0] to-[#7137D6] text-white px-3 py-2 rounded-full hover:opacity-90"
+        >
+          <i class="material-icons">save</i>
+        </button>
+      </div>
+    </div>
+    
     <div class="mb-4">
       <h2 class="text-2xl font-semibold gradient-text mb-2">Today's Fixation</h2>
       <div class="flex gap-2">
