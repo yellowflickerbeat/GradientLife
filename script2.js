@@ -34,6 +34,7 @@ class TodoApp {
     document.getElementById("saveTakeaway").addEventListener("click", () => this.saveTakeaway());
     this.setupRealtimeListeners();
     this.loadTodayData();
+    this.setupFixationAutocomplete();
   }
 
   setupRealtimeListeners() {
@@ -59,6 +60,107 @@ class TodoApp {
       }
     });
   }
+
+  async getFixationHistory() {
+    try {
+      const snapshot = await get(ref(db, 'days'));
+      if (!snapshot.exists()) return [];
+      
+      const allDays = snapshot.val();
+      return Object.values(allDays)
+        .map(day => day.obsessiveThing?.trim())
+        .filter((value, index, self) => 
+          value && self.indexOf(value) === index
+        );
+    } catch (error) {
+      console.error("Error getting fixation history:", error);
+      return [];
+    }
+  }
+
+  setupFixationAutocomplete() {
+    const input = this.obsessiveThingInput;
+    let currentFocus = -1;
+    let suggestions = [];
+
+    const createSuggestionsBox = (items) => {
+        closeSuggestions();
+        if (items.length === 0) return;
+
+        const box = document.createElement("div");
+        box.className = "autocomplete-items bg-white border rounded shadow-lg max-h-40 overflow-y-auto absolute";
+        
+        // Positioning the suggestion box directly below the input field
+        const rect = input.getBoundingClientRect();
+        box.style.left = `${rect.left}px`;
+        box.style.top = `${rect.bottom + window.scrollY}px`;
+        box.style.width = `${rect.width}px`;
+        box.style.zIndex = "1000";
+
+        items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "p-2 hover:bg-gray-100 cursor-pointer";
+            div.innerHTML = item;
+            div.onclick = () => {
+                input.value = item;
+                closeSuggestions();
+            };
+            box.appendChild(div);
+        });
+
+        document.body.appendChild(box);
+    };
+
+    const closeSuggestions = () => {
+        document.querySelectorAll(".autocomplete-items").forEach(el => el.remove());
+        currentFocus = -1;
+    };
+
+    input.addEventListener("input", async () => {
+        closeSuggestions();
+        if (!input.value) return;
+
+        if (suggestions.length === 0) {
+            suggestions = await this.getFixationHistory();
+        }
+
+        const matches = suggestions.filter(item =>
+            item.toLowerCase().includes(input.value.toLowerCase())
+        );
+
+        if (matches.length > 0) {
+            createSuggestionsBox(matches);
+        }
+    });
+
+    input.addEventListener("keydown", (e) => {
+        const items = document.querySelectorAll(".autocomplete-items div");
+        if (items.length === 0) return;
+
+        if (e.key === "ArrowDown") {
+            currentFocus = Math.min(currentFocus + 1, items.length - 1);
+        } else if (e.key === "ArrowUp") {
+            currentFocus = Math.max(currentFocus - 1, 0);
+        } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (currentFocus > -1) {
+                items[currentFocus].click();
+            }
+            return;
+        }
+
+        items.forEach((option, index) => {
+            option.classList.toggle("bg-gray-100", index === currentFocus);
+        });
+    });
+
+    document.addEventListener("click", (e) => {
+        if (e.target !== input) {
+            closeSuggestions();
+        }
+    });
+  }
+
 
   async loadTodayData() {
     try {
